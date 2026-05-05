@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoltFleet — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --bg2: #0f1318;
+      --bg3: #151a21;
+      --border: #1e2730;
+      --border2: #263040;
+      --volt: #a3ff47;
+      --volt2: #7fd625;
+      --cyan: #22d3ee;
+      --purple: #a78bfa;
+      --red: #f87171;
+      --orange: #fb923c;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --card: #111620;
+      --sidebar-w: 260px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--volt);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-badge {
+      display: inline-block;
+      background: var(--volt);
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-nav {
+      padding: 16px 0;
+      flex: 1;
+    }
+
+    .nav-section {
+      padding: 8px 20px 4px;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      color: var(--muted2);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(163, 255, 71, 0.04);
+      border-left-color: var(--volt);
+    }
+
+    .nav-link.active {
+      color: var(--volt);
+      background: rgba(163, 255, 71, 0.06);
+      border-left-color: var(--volt);
+      font-weight: 500;
+    }
+
+    .nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .version-info {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── Main ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 60px 52px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(163,255,71,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 40%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(163,255,71,0.08);
+      border: 1px solid rgba(163,255,71,0.2);
+      border-radius: 20px;
+      padding: 4px 14px 4px 8px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      color: var(--volt);
+      margin-bottom: 20px;
+    }
+
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px;
+      background: var(--volt);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span {
+      color: var(--volt);
+    }
+
+    .hero-sub {
+      color: var(--muted2);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .tag-green { background: rgba(163,255,71,0.08); border-color: rgba(163,255,71,0.25); color: var(--volt); }
+    .tag-cyan { background: rgba(34,211,238,0.08); border-color: rgba(34,211,238,0.25); color: var(--cyan); }
+    .tag-purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.25); color: var(--purple); }
+    .tag-orange { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.25); color: var(--orange); }
+
+    /* ── Content ── */
+    .content {
+      padding: 56px 60px;
+      max-width: 900px;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 72px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--volt);
+      font-weight: 500;
+      min-width: 28px;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      margin-top: 28px;
+    }
+
+    h3:first-child { margin-top: 0; }
+
+    p {
+      color: var(--muted2);
+      margin-bottom: 14px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: var(--border2); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .card-sm {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      transition: border-color 0.2s;
+    }
+
+    .card-sm:hover { border-color: var(--border2); }
+
+    .card-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+
+    /* ── Code blocks ── */
+    .code-block {
+      background: #080b0f;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #a0aec0;
+    }
+
+    pre .c { color: var(--muted); }
+    pre .k { color: var(--volt); }
+    pre .s { color: var(--cyan); }
+    pre .v { color: var(--purple); }
+    pre .cmd { color: var(--volt2); }
+
+    code {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--cyan);
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead { background: var(--bg3); }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: var(--muted2);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    td:first-child {
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+      color: var(--cyan);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+    }
+
+    .badge-green { background: rgba(163,255,71,0.12); color: var(--volt); }
+    .badge-red { background: rgba(248,113,113,0.12); color: var(--red); }
+    .badge-cyan { background: rgba(34,211,238,0.12); color: var(--cyan); }
+    .badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); }
+
+    /* ── Alert boxes ── */
+    .alert {
+      display: flex;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid;
+    }
+
+    .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    .alert-body { flex: 1; }
+
+    .alert-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 0;
+      color: inherit;
+      opacity: 0.85;
+    }
+
+    .alert-info { background: rgba(34,211,238,0.06); border-color: rgba(34,211,238,0.2); color: var(--cyan); }
+    .alert-warn { background: rgba(251,146,60,0.06); border-color: rgba(251,146,60,0.2); color: var(--orange); }
+    .alert-success { background: rgba(163,255,71,0.06); border-color: rgba(163,255,71,0.2); color: var(--volt); }
+
+    /* ── Checklist ── */
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--muted2);
+    }
+
+    .check-icon {
+      width: 20px; height: 20px;
+      border-radius: 6px;
+      background: rgba(163,255,71,0.12);
+      color: var(--volt);
+      font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── File tree ── */
+    .file-tree {
+      background: #080b0f;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+      margin-bottom: 20px;
+    }
+
+    .ft-dir { color: var(--cyan); }
+    .ft-file { color: var(--muted2); }
+    .ft-comment { color: var(--muted); font-style: italic; }
+    .ft-indent { padding-left: 20px; display: block; }
+    .ft-indent2 { padding-left: 40px; display: block; }
+    .ft-indent3 { padding-left: 60px; display: block; }
+
+    /* ── Pages list ── */
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .page-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .page-item:hover { border-color: var(--border2); }
+
+    .page-emoji { font-size: 20px; }
+
+    .page-info {}
+
+    .page-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .page-route {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── Support box ── */
+    .support-box {
+      background: linear-gradient(135deg, rgba(163,255,71,0.06) 0%, rgba(34,211,238,0.04) 100%);
+      border: 1px solid rgba(163,255,71,0.2);
+      border-radius: 14px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .support-box h3 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .support-btn {
+      display: inline-block;
+      background: var(--volt);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+
+    .support-btn:hover { background: var(--volt2); }
+
+    /* ── Scrollbar for main ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .hero, .content { padding: 32px 24px; }
+      .hero h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">VoltFleet</span>
+    </div>
+    <span class="logo-badge">v1.0.0</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Getting Started</div>
+    <a href="#introduction" class="nav-link active"><span class="nav-dot"></span>Introduction</a>
+    <a href="#requirements" class="nav-link"><span class="nav-dot"></span>Requirements</a>
+    <a href="#installation" class="nav-link"><span class="nav-dot"></span>Installation</a>
+    <a href="#structure" class="nav-link"><span class="nav-dot"></span>File Structure</a>
+
+    <div class="nav-section">Template</div>
+    <a href="#pages" class="nav-link"><span class="nav-dot"></span>Pages & Routes</a>
+    <a href="#components" class="nav-link"><span class="nav-dot"></span>Components</a>
+    <a href="#theming" class="nav-link"><span class="nav-dot"></span>Theming</a>
+    <a href="#customization" class="nav-link"><span class="nav-dot"></span>Customization</a>
+
+    <div class="nav-section">Reference</div>
+    <a href="#tech-stack" class="nav-link"><span class="nav-dot"></span>Tech Stack</a>
+    <a href="#browser-support" class="nav-link"><span class="nav-dot"></span>Browser Support</a>
+    <a href="#changelog" class="nav-link"><span class="nav-dot"></span>Changelog</a>
+    <a href="#support" class="nav-link"><span class="nav-dot"></span>Support</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="version-info">VoltFleet Admin v1.0.0<br>© 2025 All Rights Reserved</div>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      Documentation v1.0.0
+    </div>
+    <h1>VoltFleet <span>Admin</span><br>Dashboard</h1>
+    <p class="hero-sub">
+      A professional EV fleet management admin template built with Next.js 14, Tailwind CSS, and ShadcnUI. Fully typed with TypeScript, dark/light mode ready, and production-grade.
+    </p>
+    <div class="hero-tags">
+      <span class="tag tag-green">⚡ Next.js 14</span>
+      <span class="tag tag-cyan">🎨 Tailwind CSS</span>
+      <span class="tag tag-purple">🧩 ShadcnUI</span>
+      <span class="tag tag-orange">📘 TypeScript</span>
+      <span class="tag tag-green">🌙 Dark / Light Mode</span>
+      <span class="tag tag-cyan">📱 Fully Responsive</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Introduction -->
+    <section class="section" id="introduction">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Introduction</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>
+        <strong style="color:#fff">VoltFleet</strong> is a premium admin dashboard template designed specifically for electric vehicle fleet management platforms. It provides a comprehensive set of pages, components, and data visualizations to help you build powerful fleet management software faster.
+      </p>
+      <p>
+        Built on the latest <strong style="color:#fff">Next.js 14 App Router</strong>, fully typed with TypeScript, and styled with Tailwind CSS + ShadcnUI, VoltFleet is production-ready out of the box.
+      </p>
+
+      <div class="alert alert-success">
+        <span class="alert-icon">✅</span>
+        <div class="alert-body">
+          <div class="alert-title">What's Included</div>
+          <div class="alert-text">10 fully built pages, 30+ reusable components, dark/light mode, responsive layout, interactive charts, live tracking UI, geofence configuration, RBAC matrix, and shift management.</div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card-sm">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Next.js 14 App Router</div>
+          <div class="card-desc">Modern file-based routing with server and client components</div>
+        </div>
+        <div class="card-sm">
+          <div class="card-icon">📘</div>
+          <div class="card-title">100% TypeScript</div>
+          <div class="card-desc">Fully typed codebase with interfaces and strict mode</div>
+        </div>
+        <div class="card-sm">
+          <div class="card-icon">🌙</div>
+          <div class="card-title">Dark & Light Mode</div>
+          <div class="card-desc">System preference aware theme switching built-in</div>
+        </div>
+        <div class="card-sm">
+          <div class="card-icon">📱</div>
+          <div class="card-title">Fully Responsive</div>
+          <div class="card-desc">Mobile, tablet, and desktop layouts out of the box</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Requirements -->
+    <section class="section" id="requirements">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Requirements</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>Before installing VoltFleet, make sure your development environment meets the following requirements:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Minimum Version</th>
+              <th>Recommended</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Node.js</td>
+              <td>18.0.0</td>
+              <td><span class="badge badge-green">20.x LTS</span></td>
+              <td>Required for Next.js 14</td>
+            </tr>
+            <tr>
+              <td>npm</td>
+              <td>8.x</td>
+              <td><span class="badge badge-green">10.x</span></td>
+              <td>Or use yarn / pnpm</td>
+            </tr>
+            <tr>
+              <td>Next.js</td>
+              <td>14.0.0</td>
+              <td><span class="badge badge-green">14.x</span></td>
+              <td>Included in package.json</td>
+            </tr>
+            <tr>
+              <td>TypeScript</td>
+              <td>5.0</td>
+              <td><span class="badge badge-green">5.x</span></td>
+              <td>Included in package.json</td>
+            </tr>
+            <tr>
+              <td>OS</td>
+              <td>Any</td>
+              <td><span class="badge badge-cyan">Mac / Windows / Linux</span></td>
+              <td>Cross-platform</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <div class="alert-body">
+          <div class="alert-title">Check Your Node Version</div>
+          <div class="alert-text">Run <code>node -v</code> in your terminal to check your current Node.js version. If it's below 18, download the latest LTS from <strong>nodejs.org</strong>.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation -->
+    <section class="section" id="installation">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Installation</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <h3>Step 1 — Extract the ZIP</h3>
+      <p>Extract the downloaded <code>voltfleet-admin.zip</code> file to your desired location.</p>
+
+      <h3>Step 2 — Open in Terminal</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="c"># Navigate into the project folder</span>
+<span class="cmd">cd</span> voltfleet-admin</pre>
+      </div>
+
+      <h3>Step 3 — Install Dependencies</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">npm</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="cmd">npm install</span>
+
+<span class="c"># or with yarn</span>
+<span class="cmd">yarn install</span>
+
+<span class="c"># or with pnpm</span>
+<span class="cmd">pnpm install</span></pre>
+      </div>
+
+      <h3>Step 4 — Start Development Server</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="cmd">npm run dev</span></pre>
+      </div>
+
+      <p>Open <code>http://localhost:3000</code> in your browser. You should see the VoltFleet dashboard.</p>
+
+      <h3>Step 5 — Build for Production</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="cmd">npm run build</span>
+<span class="cmd">npm run start</span></pre>
+      </div>
+
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-body">
+          <div class="alert-title">Do NOT include node_modules</div>
+          <div class="alert-text">The ZIP does not include <code>node_modules</code>. You must run <code>npm install</code> after extracting. This keeps the file size small and ensures you get the latest compatible packages.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- File Structure -->
+    <section class="section" id="structure">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>File Structure</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>VoltFleet uses the <strong style="color:#fff">Next.js 14 App Router</strong> convention. Here is the full project structure:</p>
+
+      <div class="file-tree">
+        <span class="ft-dir">voltfleet-admin/</span>
+        <span class="ft-indent ft-dir">├── app/                       <span class="ft-comment"># All pages (App Router)</span></span>
+        <span class="ft-indent2 ft-file">├── page.tsx                <span class="ft-comment"># Dashboard (home)</span></span>
+        <span class="ft-indent2 ft-file">├── layout.tsx              <span class="ft-comment"># Root layout</span></span>
+        <span class="ft-indent2 ft-dir">├── alerts/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── analytics/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── battery/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── charging/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── drivers/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── fleet/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── performance/page.tsx</span>
+        <span class="ft-indent2 ft-dir">├── settings/page.tsx</span>
+        <span class="ft-indent2 ft-dir">└── tracking/page.tsx</span>
+        <span class="ft-indent ft-dir">├── components/                <span class="ft-comment"># Reusable components</span></span>
+        <span class="ft-indent2 ft-dir">├── ui/                     <span class="ft-comment"># ShadcnUI components</span></span>
+        <span class="ft-indent2 ft-file">├── sidebar.tsx</span>
+        <span class="ft-indent2 ft-file">├── header.tsx</span>
+        <span class="ft-indent2 ft-file">└── theme-provider.tsx</span>
+        <span class="ft-indent ft-dir">├── public/                    <span class="ft-comment"># Static assets</span></span>
+        <span class="ft-indent ft-file">├── package.json</span>
+        <span class="ft-indent ft-file">├── tailwind.config.ts</span>
+        <span class="ft-indent ft-file">├── next.config.js</span>
+        <span class="ft-indent ft-file">├── tsconfig.json</span>
+        <span class="ft-indent ft-file">└── README.md</span>
+      </div>
+    </section>
+
+    <!-- Pages -->
+    <section class="section" id="pages">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Pages & Routes</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>VoltFleet includes <strong style="color:#fff">10 fully built pages</strong>, each with real data visualizations and interactive components.</p>
+
+      <div class="pages-grid">
+        <div class="page-item">
+          <span class="page-emoji">📊</span>
+          <div class="page-info">
+            <div class="page-name">Dashboard</div>
+            <div class="page-route">/</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">🚌</span>
+          <div class="page-info">
+            <div class="page-name">Fleet Overview</div>
+            <div class="page-route">/fleet</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">📍</span>
+          <div class="page-info">
+            <div class="page-name">Live Tracking</div>
+            <div class="page-route">/tracking</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">⚡</span>
+          <div class="page-info">
+            <div class="page-name">Charging Stations</div>
+            <div class="page-route">/charging</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">👤</span>
+          <div class="page-info">
+            <div class="page-name">Drivers</div>
+            <div class="page-route">/drivers</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">🔋</span>
+          <div class="page-info">
+            <div class="page-name">Battery Health</div>
+            <div class="page-route">/battery</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">📈</span>
+          <div class="page-info">
+            <div class="page-name">Analytics</div>
+            <div class="page-route">/analytics</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">🏎️</span>
+          <div class="page-info">
+            <div class="page-name">Performance</div>
+            <div class="page-route">/performance</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">🔔</span>
+          <div class="page-info">
+            <div class="page-name">Alerts</div>
+            <div class="page-route">/alerts</div>
+          </div>
+        </div>
+        <div class="page-item">
+          <span class="page-emoji">⚙️</span>
+          <div class="page-info">
+            <div class="page-name">Settings</div>
+            <div class="page-route">/settings</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Components -->
+    <section class="section" id="components">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Components</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>All components are in the <code>/components</code> directory and follow ShadcnUI conventions.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Location</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sidebar</td>
+              <td>/components/sidebar.tsx</td>
+              <td>Main navigation sidebar with collapsible menu</td>
+            </tr>
+            <tr>
+              <td>Header</td>
+              <td>/components/header.tsx</td>
+              <td>Top bar with search, notifications, theme toggle</td>
+            </tr>
+            <tr>
+              <td>ThemeProvider</td>
+              <td>/components/theme-provider.tsx</td>
+              <td>Dark/light mode context provider</td>
+            </tr>
+            <tr>
+              <td>StatCard</td>
+              <td>Used in Dashboard</td>
+              <td>KPI metric card with icon and trend</td>
+            </tr>
+            <tr>
+              <td>AlertCard</td>
+              <td>Used in Alerts page</td>
+              <td>Dismissible alert notification card</td>
+            </tr>
+            <tr>
+              <td>ToggleSwitch</td>
+              <td>Used in Settings page</td>
+              <td>Accessible boolean toggle control</td>
+            </tr>
+            <tr>
+              <td>GeofenceMap</td>
+              <td>Used in Settings page</td>
+              <td>Interactive zone drawing and configuration</td>
+            </tr>
+            <tr>
+              <td>RBACMatrix</td>
+              <td>Used in Settings page</td>
+              <td>Role-based permission toggle table</td>
+            </tr>
+            <tr>
+              <td>ShiftTimeline</td>
+              <td>Used in Settings page</td>
+              <td>24-hour visual shift scheduler</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Theming -->
+    <section class="section" id="theming">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Theming</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <p>VoltFleet supports <strong style="color:#fff">Dark and Light mode</strong> out of the box via <code>next-themes</code> and a custom <code>ThemeProvider</code>.</p>
+
+      <h3>How Theming Works</h3>
+      <p>The theme is stored in <code>localStorage</code> and applied via a CSS class on the <code>&lt;html&gt;</code> element. Components use the <code>useTheme()</code> hook to conditionally apply classes.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Usage Example</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="k">import</span> { useTheme } <span class="k">from</span> <span class="s">'@/components/theme-provider'</span>;
+
+<span class="k">const</span> { theme } = useTheme();
+<span class="k">const</span> isDark = theme === <span class="s">'dark'</span>;
+
+<span class="c">// Use in className</span>
+<span class="k">&lt;div</span> className={isDark ? <span class="s">'bg-gray-900'</span> : <span class="s">'bg-white'</span>}<span class="k">&gt;</span></pre>
+      </div>
+
+      <h3>Customizing Colors</h3>
+      <p>Primary brand colors are defined in <code>tailwind.config.ts</code>. Look for the <code>volt</code> and <code>cyber</code> color scales:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">tailwind.config.ts</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre>colors: {
+  <span class="v">volt</span>: {
+    <span class="s">'400'</span>: <span class="s">'#a3ff47'</span>,   <span class="c">// Primary green accent</span>
+    <span class="s">'500'</span>: <span class="s">'#7fd625'</span>,
+  },
+  <span class="v">cyber</span>: {
+    <span class="s">'400'</span>: <span class="s">'#22d3ee'</span>,   <span class="c">// Cyan accent</span>
+  }
+}</pre>
+      </div>
+    </section>
+
+    <!-- Customization -->
+    <section class="section" id="customization">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Customization</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <h3>Changing the Brand Name</h3>
+      <p>Search for <code>"VoltFleet"</code> across the project and replace with your brand name. The main logo is in <code>components/sidebar.tsx</code>.</p>
+
+      <h3>Adding a New Page</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="c"># 1. Create the folder and page file</span>
+mkdir app/reports
+touch app/reports/page.tsx
+
+<span class="c"># 2. Add the route to the sidebar in components/sidebar.tsx</span></pre>
+      </div>
+
+      <h3>Replacing Mock Data</h3>
+      <p>All pages use local mock data arrays defined at the top of each <code>page.tsx</code> file. Replace these with your API calls using <code>fetch</code>, <code>axios</code>, or <code>SWR</code>:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">Example API integration</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#ef4444"></div>
+            <div class="code-dot" style="background:#f59e0b"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+        <pre><span class="c">// Replace mock data with a real API call</span>
+<span class="k">const</span> [vehicles, setVehicles] = useState([]);
+
+useEffect(() => {
+  <span class="k">fetch</span>(<span class="s">'/api/vehicles'</span>)
+    .then(res => res.json())
+    .then(data => setVehicles(data));
+}, []);</pre>
+      </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="section" id="tech-stack">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Tech Stack</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Technology</th>
+              <th>Version</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Next.js</td>
+              <td><span class="badge badge-green">14.x</span></td>
+              <td>React framework with App Router</td>
+            </tr>
+            <tr>
+              <td>TypeScript</td>
+              <td><span class="badge badge-cyan">5.x</span></td>
+              <td>Static typing across all files</td>
+            </tr>
+            <tr>
+              <td>Tailwind CSS</td>
+              <td><span class="badge badge-cyan">3.x</span></td>
+              <td>Utility-first CSS framework</td>
+            </tr>
+            <tr>
+              <td>ShadcnUI</td>
+              <td><span class="badge badge-purple">latest</span></td>
+              <td>Accessible UI component library</td>
+            </tr>
+            <tr>
+              <td>Lucide React</td>
+              <td><span class="badge badge-purple">latest</span></td>
+              <td>Icon library</td>
+            </tr>
+            <tr>
+              <td>next-themes</td>
+              <td><span class="badge badge-green">latest</span></td>
+              <td>Dark/light mode management</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Browser Support -->
+    <section class="section" id="browser-support">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Browser Support</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Browser</th>
+              <th>Support</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Chrome 90+</td>
+              <td><span class="badge badge-green">✅ Supported</span></td>
+              <td>Fully tested</td>
+            </tr>
+            <tr>
+              <td>Firefox 88+</td>
+              <td><span class="badge badge-green">✅ Supported</span></td>
+              <td>Fully tested</td>
+            </tr>
+            <tr>
+              <td>Safari 14+</td>
+              <td><span class="badge badge-green">✅ Supported</span></td>
+              <td>Fully tested</td>
+            </tr>
+            <tr>
+              <td>Edge 90+</td>
+              <td><span class="badge badge-green">✅ Supported</span></td>
+              <td>Chromium-based, fully supported</td>
+            </tr>
+            <tr>
+              <td>Internet Explorer</td>
+              <td><span class="badge badge-red">❌ Not Supported</span></td>
+              <td>IE is end-of-life</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Changelog -->
+    <section class="section" id="changelog">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Changelog</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+          <span class="badge badge-green">v1.0.0</span>
+          <span style="color:var(--muted); font-size:13px; font-family:'DM Mono',monospace;">Initial Release — 2025</span>
+        </div>
+        <ul class="checklist">
+          <li><span class="check-icon">✓</span>10 fully built pages with Next.js 14 App Router</li>
+          <li><span class="check-icon">✓</span>Dark and Light mode with system preference detection</li>
+          <li><span class="check-icon">✓</span>Fully responsive layout for mobile, tablet, desktop</li>
+          <li><span class="check-icon">✓</span>Interactive Geofence Map with zone configuration</li>
+          <li><span class="check-icon">✓</span>Role-Based Access Control (RBAC) permission matrix</li>
+          <li><span class="check-icon">✓</span>Shift management with 24-hour visual timeline</li>
+          <li><span class="check-icon">✓</span>Live tracking UI with vehicle status indicators</li>
+          <li><span class="check-icon">✓</span>Battery health monitoring dashboard</li>
+          <li><span class="check-icon">✓</span>Charging station management interface</li>
+          <li><span class="check-icon">✓</span>100% TypeScript with strict typing</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Support -->
+    <section class="section" id="support">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2>Support</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="support-box">
+        <div style="font-size:36px; margin-bottom:12px;">💬</div>
+        <h3>Need Help?</h3>
+        <p style="color:var(--muted2); max-width:420px; margin:8px auto 0;">
+          If you have questions, found a bug, or need assistance with customization, please reach out through the Envato ThemeForest support system. We respond within 24–48 hours on business days.
+        </p>
+        <a href="#" class="support-btn">Open a Support Ticket →</a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="alert alert-info">
+          <span class="alert-icon">ℹ️</span>
+          <div class="alert-body">
+            <div class="alert-title">Before Contacting Support</div>
+            <div class="alert-text">Please check that you are running Node.js 18+, have run <code>npm install</code>, and have read through this documentation fully. Most common issues are solved by these steps.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + entry.target.id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
