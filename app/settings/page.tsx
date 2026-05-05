@@ -18,13 +18,54 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
-const mockGeofences = [
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Role = 'Admin' | 'Dispatcher' | 'Driver' | 'Mechanic' | 'Accountant';
+
+type AutoAssignStrategy = 'highest-charge' | 'lowest-mileage';
+
+interface Geofence {
+  id: number;
+  name: string;
+  speedLimit: number;
+  detentionAlert: number;
+  color: string;
+  coords: [number, number][];
+}
+
+interface Permission {
+  id: string;
+  label: string;
+  defaults: Record<Role, boolean>;
+}
+
+interface PermissionRow extends Permission {
+  values: Record<Role, boolean>;
+}
+
+interface ShiftTemplate {
+  id: number;
+  name: string;
+  start: string;
+  end: string;
+  color: string;
+}
+
+interface ToggleSwitchProps {
+  checked: boolean;
+  onChange: () => void;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const mockGeofences: Geofence[] = [
   { id: 1, name: 'Central Warehouse', speedLimit: 15, detentionAlert: 120, color: '#22c55e', coords: [[37.7, -122.4], [37.8, -122.4], [37.8, -122.3], [37.7, -122.3]] },
   { id: 2, name: 'Downtown Zone', speedLimit: 25, detentionAlert: 60, color: '#3b82f6', coords: [[37.75, -122.45], [37.85, -122.45], [37.85, -122.35], [37.75, -122.35]] }
 ];
 
-const roles = ['Admin', 'Dispatcher', 'Driver', 'Mechanic', 'Accountant'];
-const permissions = [
+const roles: Role[] = ['Admin', 'Dispatcher', 'Driver', 'Mechanic', 'Accountant'];
+
+const permissions: Permission[] = [
   { id: 'view_routes', label: 'View Routes', defaults: { Admin: true, Dispatcher: true, Driver: true, Mechanic: false, Accountant: false } },
   { id: 'edit_routes', label: 'Edit Routes', defaults: { Admin: true, Dispatcher: true, Driver: false, Mechanic: false, Accountant: false } },
   { id: 'view_drivers', label: 'View Drivers', defaults: { Admin: true, Dispatcher: true, Driver: false, Mechanic: true, Accountant: false } },
@@ -36,26 +77,28 @@ const permissions = [
   { id: 'assign_vehicles', label: 'Assign Vehicles', defaults: { Admin: true, Dispatcher: true, Driver: false, Mechanic: false, Accountant: false } }
 ];
 
-const shiftTemplates = [
+const shiftTemplates: ShiftTemplate[] = [
   { id: 1, name: 'Morning Shift', start: '06:00', end: '14:00', color: '#f59e0b' },
   { id: 2, name: 'Day Shift', start: '14:00', end: '22:00', color: '#3b82f6' },
   { id: 3, name: 'Night Shift', start: '22:00', end: '06:00', color: '#8b5cf6' }
 ];
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [activeTab, setActiveTab] = useState('geofence');
-  const [geofences, setGeofences] = useState(mockGeofences);
-  const [selectedGeofence, setSelectedGeofence] = useState(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [permissionMatrix, setPermissionMatrix] = useState(
+  const [activeTab, setActiveTab] = useState<string>('geofence');
+  const [geofences, setGeofences] = useState<Geofence[]>(mockGeofences);
+  const [selectedGeofence, setSelectedGeofence] = useState<Geofence | null>(null);
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [permissionMatrix, setPermissionMatrix] = useState<PermissionRow[]>(
     permissions.map(p => ({ ...p, values: { ...p.defaults } }))
   );
-  const [autoAssignStrategy, setAutoAssignStrategy] = useState('highest-charge');
-  const [shifts, setShifts] = useState(shiftTemplates);
+  const [autoAssignStrategy, setAutoAssignStrategy] = useState<AutoAssignStrategy>('highest-charge');
+  const [shifts, setShifts] = useState<ShiftTemplate[]>(shiftTemplates);
 
-  const togglePermission = (permissionId, role) => {
+  const togglePermission = (permissionId: string, role: Role): void => {
     setPermissionMatrix(prev => prev.map(p => 
       p.id === permissionId 
         ? { ...p, values: { ...p.values, [role]: !p.values[role] } }
@@ -63,7 +106,7 @@ export default function SettingsPage() {
     ));
   };
 
-  const ToggleSwitch = ({ checked, onChange }) => (
+  const ToggleSwitch = ({ checked, onChange }: ToggleSwitchProps) => (
     <button
       onClick={onChange}
       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
@@ -82,8 +125,8 @@ export default function SettingsPage() {
     <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} p-6`}>
       {/* Header */}
       <div className="mb-6">
- <h1 className="text-3xl font-bold bg-gradient-to-r from-volt-400 to-cyber-400 bg-clip-text text-transparent">
-                    Settings & Configuration
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-volt-400 to-cyber-400 bg-clip-text text-transparent">
+          Settings & Configuration
         </h1>
         <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
           Granular control over geofences, permissions, and automation
@@ -144,14 +187,14 @@ export default function SettingsPage() {
               }}></div>
 
               {/* Geofence Polygons */}
-              {geofences.map((geo) => (
+              {geofences.map((geo, idx) => (
                 <div
                   key={geo.id}
                   onClick={() => setSelectedGeofence(geo)}
                   className="absolute cursor-pointer group"
                   style={{
                     left: '20%',
-                    top: geo.id === 1 ? '20%' : '50%',
+                    top: idx === 0 ? '20%' : '50%',
                     width: '40%',
                     height: '30%',
                     backgroundColor: `${geo.color}20`,
@@ -160,7 +203,7 @@ export default function SettingsPage() {
                     transition: 'all 0.2s'
                   }}
                 >
-                  <div className={`absolute top-2 left-2 px-3 py-1 rounded-lg text-xs font-bold text-white`}
+                  <div className="absolute top-2 left-2 px-3 py-1 rounded-lg text-xs font-bold text-white"
                     style={{ backgroundColor: geo.color }}>
                     {geo.name}
                   </div>
@@ -198,6 +241,7 @@ export default function SettingsPage() {
                   <input
                     type="text"
                     value={selectedGeofence.name}
+                    onChange={(e) => setSelectedGeofence({ ...selectedGeofence, name: e.target.value })}
                     className={`w-full px-3 py-2 rounded-lg ${isDark ? 'bg-gray-900 border-gray-700 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border`}
                   />
                 </div>
@@ -208,6 +252,7 @@ export default function SettingsPage() {
                     <input
                       type="number"
                       value={selectedGeofence.speedLimit}
+                      onChange={(e) => setSelectedGeofence({ ...selectedGeofence, speedLimit: Number(e.target.value) })}
                       className={`flex-1 px-3 py-2 rounded-lg ${isDark ? 'bg-gray-900 border-gray-700 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border`}
                     />
                     <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>km/h</span>
@@ -224,6 +269,7 @@ export default function SettingsPage() {
                     <input
                       type="number"
                       value={selectedGeofence.detentionAlert}
+                      onChange={(e) => setSelectedGeofence({ ...selectedGeofence, detentionAlert: Number(e.target.value) })}
                       className={`flex-1 px-3 py-2 rounded-lg ${isDark ? 'bg-gray-900 border-gray-700 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border`}
                     />
                     <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>minutes</span>
@@ -305,7 +351,7 @@ export default function SettingsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700">
-                {permissionMatrix.map((permission, idx) => (
+                {permissionMatrix.map((permission) => (
                   <tr key={permission.id} className={`${isDark ? 'hover:bg-gray-750' : 'hover:bg-gray-50'} transition-colors`}>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
