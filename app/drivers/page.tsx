@@ -21,7 +21,60 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
-const mockDrivers = [
+type DriverStatus = 'on-duty' | 'off-duty';
+type DocumentStatus = 'active' | 'expiring' | 'expired';
+type TabType = 'overview' | 'wallet' | 'ev-metrics';
+
+interface IDocumentInfo {
+  expires: string;
+  status: DocumentStatus;
+  daysLeft: number;
+}
+
+interface ILicense extends IDocumentInfo {
+  number: string;
+}
+
+interface IContact {
+  phone: string;
+  email: string;
+}
+
+interface IStats {
+  trips: number;
+  hours: number;
+  incidents: number;
+}
+
+interface IDriver {
+  id: number;
+  name: string;
+  photo: string;
+  status: DriverStatus;
+  vehicle: string | null;
+  evScore: number;
+  regenScore: number;
+  speedScore: number;
+  rangeAnxiety: number;
+  pluginAdherence: number;
+  license: ILicense;
+  medical: IDocumentInfo;
+  contact: IContact;
+  stats: IStats;
+}
+
+interface IStatusColors {
+  bg: string;
+  text: string;
+  dot: string;
+}
+
+interface IDonutChartProps {
+  score: number;
+  size?: number;
+}
+
+const mockDrivers: IDriver[] = [
   {
     id: 1,
     name: 'Sarah Johnson',
@@ -91,26 +144,26 @@ const mockDrivers = [
 export default function DriversPage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [selectedDriver, setSelectedDriver] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedDriver, setSelectedDriver] = useState<IDriver | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
 
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'active': return { bg: 'bg-green-500/10', text: 'text-green-400', dot: 'bg-green-500' };
+  const getStatusColor = (status: DocumentStatus): IStatusColors => {
+    switch (status) {
+      case 'active':   return { bg: 'bg-green-500/10',  text: 'text-green-400',  dot: 'bg-green-500' };
       case 'expiring': return { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: 'bg-orange-500 animate-pulse' };
-      case 'expired': return { bg: 'bg-red-500/10', text: 'text-red-400', dot: 'bg-red-500' };
-      default: return { bg: 'bg-gray-500/10', text: 'text-gray-400', dot: 'bg-gray-500' };
+      case 'expired':  return { bg: 'bg-red-500/10',    text: 'text-red-400',    dot: 'bg-red-500' };
+      default:         return { bg: 'bg-gray-500/10',   text: 'text-gray-400',   dot: 'bg-gray-500' };
     }
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = (score: number): string => {
     if (score >= 90) return 'text-green-400';
     if (score >= 75) return 'text-blue-400';
     if (score >= 60) return 'text-yellow-400';
     return 'text-red-400';
   };
 
-  const DonutChart = ({ score, size = 60 }) => {
+  const DonutChart = ({ score, size = 60 }: IDonutChartProps): React.ReactElement => {
     const color = score >= 90 ? '#22c55e' : score >= 75 ? '#3b82f6' : score >= 60 ? '#eab308' : '#ef4444';
     const circumference = 2 * Math.PI * 18;
     const offset = circumference - (score / 100) * circumference;
@@ -139,7 +192,8 @@ export default function DriversPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-volt-400 to-cyber-400 bg-clip-text text-transparent">
-Drivers Management          </h1>
+          Drivers Management
+        </h1>
         <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
           Automated compliance tracking and performance monitoring
         </p>
@@ -264,7 +318,7 @@ Drivers Management          </h1>
 
                 {/* Tabs */}
                 <div className="flex gap-2 mb-4">
-                  {['overview', 'wallet', 'ev-metrics'].map((tab) => (
+                  {(['overview', 'wallet', 'ev-metrics'] as TabType[]).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
@@ -337,7 +391,7 @@ Drivers Management          </h1>
                         <div className="flex items-center gap-2 mt-2">
                           <Calendar className={`w-4 h-4 ${getStatusColor(selectedDriver.license.status).text}`} />
                           <span className={`text-xs ${getStatusColor(selectedDriver.license.status).text}`}>
-                            Expires: {new Date(selectedDriver.license.expires).toLocaleDateString()} 
+                            Expires: {new Date(selectedDriver.license.expires).toLocaleDateString()}
                             {selectedDriver.license.status !== 'expired' && ` (${selectedDriver.license.daysLeft} days)`}
                           </span>
                         </div>
@@ -393,7 +447,7 @@ Drivers Management          </h1>
                         </span>
                       </div>
                       <div className={`w-full h-2 ${isDark ? 'bg-gray-800' : 'bg-gray-200'} rounded-full overflow-hidden`}>
-                        <div 
+                        <div
                           className="h-full bg-gradient-to-r from-green-400 to-yellow-400 transition-all"
                           style={{ width: `${selectedDriver.rangeAnxiety}%` }}
                         ></div>
@@ -411,7 +465,7 @@ Drivers Management          </h1>
                         </span>
                       </div>
                       <div className={`w-full h-2 ${isDark ? 'bg-gray-800' : 'bg-gray-200'} rounded-full overflow-hidden`}>
-                        <div 
+                        <div
                           className="h-full bg-gradient-to-r from-green-400 to-blue-400 transition-all"
                           style={{ width: `${selectedDriver.pluginAdherence}%` }}
                         ></div>

@@ -4,6 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
 import { Navbar } from "@/components/navbar";
+import { MainContent } from "@/components/main-content";
+import { SidebarProvider } from "@/components/sidebar-context";
+import 'leaflet/dist/leaflet.css';  // ✅ add here
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,23 +36,23 @@ export default function RootLayout({
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider defaultTheme="dark">
-          <div className="flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <Sidebar />
+          <SidebarProvider>
+            <div className="flex h-screen overflow-hidden">
+              {/* Sidebar */}
+              <Sidebar />
 
-            {/* Main Content Area */}
-            <div className="flex flex-col flex-1 ml-72 transition-all duration-300">
-              {/* Navbar */}
-              <Navbar />
+              {/* Main Content Area — margin handled by client component */}
+              <MainContent>
+                {/* Navbar */}
+                <Navbar />
 
-              {/* Page Content */}
-              <main className="flex-1 overflow-y-auto  cyber-grid">
-                <div className="p-6">
-                  {children}
-                </div>
-              </main>
+                {/* Page Content */}
+                <main className="flex-1 overflow-y-auto cyber-grid">
+                  <div className="p-6">{children}</div>
+                </main>
+              </MainContent>
             </div>
-          </div>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

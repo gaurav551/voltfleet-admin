@@ -22,7 +22,34 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
-const mockAlerts = [
+type AlertType = 'critical' | 'warning' | 'info' | 'resolved';
+type AlertCategory = 'battery' | 'charging' | 'geofence' | 'predictive' | 'maintenance';
+type AlertStatus = 'new' | 'in-progress' | 'resolved';
+type ViewType = 'inbox' | 'kanban';
+type FilterStatus = 'all' | AlertStatus;
+
+interface IAlert {
+  id: number;
+  type: AlertType;
+  category: AlertCategory;
+  title: string;
+  vehicle: string;
+  message: string;
+  timestamp: string;
+  status: AlertStatus;
+  location: string;
+  assignee: string | null;
+  rule: string;
+}
+
+interface AlertColors {
+  bg: string;
+  border: string;
+  text: string;
+  dot: string;
+}
+
+const mockAlerts: IAlert[] = [
   {
     id: 1,
     type: 'critical',
@@ -106,39 +133,39 @@ const mockAlerts = [
 export default function AlertsPage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [view, setView] = useState('inbox'); // inbox or kanban or rules
-  const [selectedAlert, setSelectedAlert] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [showRuleBuilder, setShowRuleBuilder] = useState(false);
-  const [alerts, setAlerts] = useState(mockAlerts);
+  const [view, setView] = useState<ViewType>('inbox');
+  const [selectedAlert, setSelectedAlert] = useState<IAlert | null>(null);
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
+  const [showRuleBuilder, setShowRuleBuilder] = useState<boolean>(false);
+  const [alerts, setAlerts] = useState<IAlert[]>(mockAlerts);
 
-  const getAlertIcon = (category) => {
+  const getAlertIcon = (category: AlertCategory): React.ReactElement => {
     switch(category) {
-      case 'battery': return <Battery className="w-5 h-5" />;
-      case 'charging': return <Zap className="w-5 h-5" />;
-      case 'geofence': return <MapPin className="w-5 h-5" />;
+      case 'battery':    return <Battery className="w-5 h-5" />;
+      case 'charging':   return <Zap className="w-5 h-5" />;
+      case 'geofence':   return <MapPin className="w-5 h-5" />;
       case 'predictive': return <TrendingUp className="w-5 h-5" />;
-      default: return <AlertTriangle className="w-5 h-5" />;
+      default:           return <AlertTriangle className="w-5 h-5" />;
     }
   };
 
-  const getAlertColor = (type) => {
+  const getAlertColor = (type: AlertType): AlertColors => {
     switch(type) {
-      case 'critical': return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400', dot: 'bg-red-500' };
-      case 'warning': return { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400', dot: 'bg-yellow-500' };
-      case 'info': return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400', dot: 'bg-blue-500' };
-      case 'resolved': return { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400', dot: 'bg-green-500' };
-      default: return { bg: 'bg-gray-500/10', border: 'border-gray-500/30', text: 'text-gray-400', dot: 'bg-gray-500' };
+      case 'critical': return { bg: 'bg-red-500/10',    border: 'border-red-500/30',    text: 'text-red-400',    dot: 'bg-red-500'    };
+      case 'warning':  return { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400', dot: 'bg-yellow-500' };
+      case 'info':     return { bg: 'bg-blue-500/10',   border: 'border-blue-500/30',   text: 'text-blue-400',   dot: 'bg-blue-500'   };
+      case 'resolved': return { bg: 'bg-green-500/10',  border: 'border-green-500/30',  text: 'text-green-400',  dot: 'bg-green-500'  };
+      default:         return { bg: 'bg-gray-500/10',   border: 'border-gray-500/30',   text: 'text-gray-400',   dot: 'bg-gray-500'   };
     }
   };
 
-  const updateAlertStatus = (id, newStatus, assignee = null) => {
+  const updateAlertStatus = (id: number, newStatus: AlertStatus, assignee: string | null = null): void => {
     setAlerts(alerts.map(alert => 
       alert.id === id ? { ...alert, status: newStatus, assignee } : alert
     ));
   };
 
-  const deleteAlert = (id) => {
+  const deleteAlert = (id: number): void => {
     setAlerts(alerts.filter(alert => alert.id !== id));
     setSelectedAlert(null);
   };
@@ -148,10 +175,10 @@ export default function AlertsPage() {
     return alert.status === filterStatus;
   });
 
-  const alertCounts = {
-    new: alerts.filter(a => a.status === 'new').length,
+  const alertCounts: Record<AlertStatus, number> = {
+    new:           alerts.filter(a => a.status === 'new').length,
     'in-progress': alerts.filter(a => a.status === 'in-progress').length,
-    resolved: alerts.filter(a => a.status === 'resolved').length
+    resolved:      alerts.filter(a => a.status === 'resolved').length,
   };
 
   return (
@@ -160,8 +187,8 @@ export default function AlertsPage() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
- <h1 className="text-3xl font-bold bg-gradient-to-r from-volt-400 to-cyber-400 bg-clip-text text-transparent">
-                        Alerts & Notifications
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-volt-400 to-cyber-400 bg-clip-text text-transparent">
+              Alerts & Notifications
             </h1>
             <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
               Triage, assign, and resolve fleet issues in real-time
@@ -294,7 +321,7 @@ export default function AlertsPage() {
               <div className="flex items-center gap-3">
                 <select 
                   value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
+                  onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
                   className={`px-3 py-1.5 rounded-lg text-sm ${isDark ? 'bg-gray-900 border-gray-700 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border`}
                 >
                   <option value="all">All Alerts</option>
@@ -433,14 +460,14 @@ export default function AlertsPage() {
       ) : (
         /* Kanban View */
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {['new', 'in-progress', 'resolved'].map((status) => (
+          {(['new', 'in-progress', 'resolved'] as AlertStatus[]).map((status) => (
             <div key={status} className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-xl p-4`}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold capitalize">{status.replace('-', ' ')}</h3>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  status === 'new' ? 'bg-red-500/10 text-red-400' :
+                  status === 'new'         ? 'bg-red-500/10 text-red-400' :
                   status === 'in-progress' ? 'bg-yellow-500/10 text-yellow-400' :
-                  'bg-green-500/10 text-green-400'
+                                             'bg-green-500/10 text-green-400'
                 }`}>
                   {alerts.filter(a => a.status === status).length}
                 </span>
